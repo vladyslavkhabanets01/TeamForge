@@ -19,6 +19,9 @@ media/
 .env
 secrets.py
 
+# Local notes
+project_notes.txt
+
 # Virtual environments
 .venv
 env/
