@@ -1,53 +1,75 @@
 # TeamForge
 
-🇺🇦 Українська &nbsp;|&nbsp; [🇬🇧 English](README.en.md)
+[🇺🇦 Українська](README.uk.md) &nbsp;|&nbsp; 🇬🇧 English
 
-Соціальна платформа для геймерів — знаходь команду, діліться досвідом, організовуй події.
+A social platform for gamers — find your team, share experience, organize events.
 
-## Функціонал
+## Features
 
-- **Профілі гравців** — аватар, улюблені ігри, Discord, Steam
-- **Пости та коментарі** — публікації з фільтрацією по грі та пошуком
-- **Пошук напарників (LFG)** — фільтр по грі, ролі та рангу
-- **Ігрові події** — створення, приєднання/вихід, лічильник учасників
-- **Авторизація** — реєстрація, вхід, вихід, захист чужих записів
+- **Gamer profiles** — avatar, favorite games, Discord, Steam
+- **Posts & comments** — publications with filtering by game and keyword search
+- **Teammate search (LFG)** — filter by game, role and rank
+- **Game events** — create, join/leave, participant counter
+- **Authentication** — register, login, logout, protection of other users' records
 
-## Технології
+## Tech Stack
 
 - Python 3.14 / Django 6.1
 - Bootstrap 5.3 (dark theme)
 - SQLite
-- Pillow (завантаження аватарів)
+- Pillow (avatar uploads)
 
-## Запуск
+## Getting Started
 
 ```bash
-# 1. Встановити залежності
+# 1. Install dependencies
 pip install -r requirements.txt
 
-# 2. Застосувати міграції
+# 2. Apply migrations
 python manage.py migrate
 
-# 3. Завантажити початкові дані (ігри)
+# 3. Load initial data (games)
 python manage.py loaddata fixtures/games.json
 
-# 4. Створити суперкористувача
+# 4. Create a superuser
 python manage.py createsuperuser
 
-# 5. Запустити сервер
+# 5. Run the development server
 python manage.py runserver
 ```
 
-Сайт: http://127.0.0.1:8000  
-Адмін-панель: http://127.0.0.1:8000/admin
+Site: http://127.0.0.1:8000  
+Admin panel: http://127.0.0.1:8000/admin
 
-## Структура
+## Optional: load sample data
+
+```bash
+python manage.py create_sample_data
+```
+
+Creates 5 demo users (password: `pass1234`), 8 posts, 24 comments, 6 LFG listings and 5 events.
+
+## Project Structure
 
 ```
-teamforge/      — налаштування проекту
-users/          — профілі, авторизація, модель Game
-posts/          — пости та коментарі
-lfg/            — LFG оголошення та події
-templates/      — HTML шаблони
-fixtures/       — початкові дані (10 ігор)
+teamforge/      — project settings & main URLs
+users/          — profiles, authentication, Game model
+posts/          — posts and comments
+lfg/            — LFG listings and events
+templates/      — HTML templates (Bootstrap 5 dark theme)
+fixtures/       — initial data (10 games)
 ```
+
+## Database
+
+SQLite with 9 tables connected via Django ORM:
+
+| Table | Description |
+|---|---|
+| `auth_user` | Built-in Django users (hashed passwords) |
+| `users_game` | Game catalog |
+| `users_userprofile` | Extended gamer profiles |
+| `posts_post` | Publications |
+| `posts_comment` | Comments on posts |
+| `lfg_lfgpost` | Looking-for-group listings |
+| `lfg_event` | Game events with participant tracking |
