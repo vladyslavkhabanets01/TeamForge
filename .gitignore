@@ -19,6 +19,9 @@ media/
 .env
 secrets.py
 
+# Collected static files
+staticfiles/
+
 # Local notes
 project_notes.txt
 
