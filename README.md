@@ -59,17 +59,3 @@ lfg/            — LFG listings and events
 templates/      — HTML templates (Bootstrap 5 dark theme)
 fixtures/       — initial data (10 games)
 ```
-
-## Database
-
-SQLite with 9 tables connected via Django ORM:
-
-| Table | Description |
-|---|---|
-| `auth_user` | Built-in Django users (hashed passwords) |
-| `users_game` | Game catalog |
-| `users_userprofile` | Extended gamer profiles |
-| `posts_post` | Publications |
-| `posts_comment` | Comments on posts |
-| `lfg_lfgpost` | Looking-for-group listings |
-| `lfg_event` | Game events with participant tracking |
