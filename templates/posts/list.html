@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}Пости — TeamForge{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="fw-bold mb-0"><i class="bi bi-newspaper me-2 text-accent"></i>Пости</h3>
+  {% if user.is_authenticated %}
+    <a href="{% url 'posts:create' %}" class="btn btn-primary">
+      <i class="bi bi-plus-lg me-1"></i>Написати пост
+    </a>
+  {% endif %}
+</div>
+
+<!-- Filters -->
+<div class="card p-3 mb-4">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-md-5">
+      <label class="form-label small mb-1">Пошук</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input type="text" name="q" class="form-control" placeholder="Назва або зміст..." value="{{ search }}">
+      </div>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label small mb-1">Гра</label>
+      <select name="game" class="form-select">
+        <option value="">Всі ігри</option>
+        {% for game in games %}
+          <option value="{{ game.pk }}" {% if selected_game == game.pk|stringformat:'s' %}selected{% endif %}>
+            {{ game.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3 d-flex gap-2">
+      <button type="submit" class="btn btn-primary flex-fill">Фільтр</button>
+      <a href="{% url 'posts:list' %}" class="btn btn-outline-secondary">✕</a>
+    </div>
+  </form>
+</div>
+
+{% if posts %}
+  <div class="row g-3">
+    {% for post in posts %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 p-3">
+        {% if post.game %}
+          <span class="badge-game mb-2 d-inline-block">{{ post.game.name }}</span>
+        {% endif %}
+        <h6 class="fw-bold mb-2">
+          <a href="{{ post.get_absolute_url }}" class="text-white text-decoration-none">{{ post.title }}</a>
+        </h6>
+        <p class="text-muted small mb-3">{{ post.content|truncatechars:100 }}</p>
+        <div class="d-flex align-items-center gap-2 mt-auto">
+          <div class="avatar-sm">{{ post.author.username|first|upper }}</div>
+          <a href="{% url 'users:profile' post.author.username %}" class="text-muted small text-decoration-none">
+            {{ post.author.username }}
+          </a>
+          <span class="text-muted small ms-auto">
+            <i class="bi bi-chat me-1"></i>{{ post.comments.count }}
+            <span class="ms-2">{{ post.created_at|date:"d.m" }}</span>
+          </span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if posts.has_other_pages %}
+  <nav class="mt-4 d-flex justify-content-center">
+    <ul class="pagination">
+      {% if posts.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ posts.previous_page_number }}&q={{ search }}&game={{ selected_game|default:'' }}">‹</a>
+        </li>
+      {% endif %}
+      {% for num in posts.paginator.page_range %}
+        <li class="page-item {% if posts.number == num %}active{% endif %}">
+          <a class="page-link" href="?page={{ num }}&q={{ search }}&game={{ selected_game|default:'' }}">{{ num }}</a>
+        </li>
+      {% endfor %}
+      {% if posts.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ posts.next_page_number }}&q={{ search }}&game={{ selected_game|default:'' }}">›</a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+
+{% else %}
+  <div class="card p-5 text-center text-muted">
+    <i class="bi bi-newspaper fs-1 mb-3 opacity-25"></i>
+    <h5>Пости не знайдено</h5>
+    {% if user.is_authenticated %}
+      <a href="{% url 'posts:create' %}" class="btn btn-primary mt-3">Написати перший пост</a>
+    {% endif %}
+  </div>
+{% endif %}
+{% endblock %}

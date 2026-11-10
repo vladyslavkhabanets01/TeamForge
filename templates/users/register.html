@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Реєстрація — TeamForge{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card p-4">
+      <h3 class="fw-bold mb-1">Реєстрація</h3>
+      <p class="text-muted small mb-4">Приєднуйся до TeamForge</p>
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+              <div class="text-danger small mt-1">{{ field.errors|join:', ' }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary w-100 mt-2">Зареєструватися</button>
+      </form>
+      <p class="text-center text-muted small mt-3">
+        Вже є акаунт? <a href="{% url 'users:login' %}">Увійти</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

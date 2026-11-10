@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% block title %}TeamForge — Платформа для геймерів{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<div class="hero-section rounded-3 mb-5 position-relative">
+  <div class="container position-relative">
+    <div class="row align-items-center">
+      <div class="col-lg-7">
+        <h1 class="display-4 fw-bold mb-3">
+          Знайди свою <span class="text-accent">команду</span>
+        </h1>
+        <p class="lead text-muted mb-4">
+          TeamForge — місце, де геймери знаходять напарників, діляться досвідом
+          та організовують спільні ігрові події.
+        </p>
+        {% if not user.is_authenticated %}
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="{% url 'users:register' %}" class="btn btn-primary btn-lg px-4">
+            <i class="bi bi-controller me-2"></i>Приєднатися
+          </a>
+          <a href="{% url 'lfg:list' %}" class="btn btn-outline-light btn-lg px-4">
+            Пошук напарників
+          </a>
+        </div>
+        {% else %}
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="{% url 'lfg:create' %}" class="btn btn-primary btn-lg px-4">
+            <i class="bi bi-people me-2"></i>Шукати команду
+          </a>
+          <a href="{% url 'posts:create' %}" class="btn btn-outline-light btn-lg px-4">
+            <i class="bi bi-pencil me-2"></i>Написати пост
+          </a>
+        </div>
+        {% endif %}
+      </div>
+      <div class="col-lg-5 d-none d-lg-flex justify-content-center">
+        <div style="font-size:9rem;opacity:.15;line-height:1">🎮</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats row -->
+<div class="row g-3 mb-5">
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3">
+      <div class="text-accent fw-bold fs-3">{{ recent_posts|length }}+</div>
+      <div class="text-muted small">Публікацій</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3">
+      <div class="text-cyan fw-bold fs-3">{{ recent_lfg|length }}+</div>
+      <div class="text-muted small">LFG оголошень</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3">
+      <div class="text-accent fw-bold fs-3">{{ upcoming_events|length }}+</div>
+      <div class="text-muted small">Подій</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="card text-center p-3">
+      <div class="text-cyan fw-bold fs-3">∞</div>
+      <div class="text-muted small">Можливостей</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Recent posts -->
+  <div class="col-lg-8">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="fw-bold mb-0"><i class="bi bi-newspaper me-2 text-accent"></i>Останні пости</h4>
+      <a href="{% url 'posts:list' %}" class="btn btn-sm btn-outline-primary">Всі пости</a>
+    </div>
+    {% if recent_posts %}
+      <div class="row g-3">
+        {% for post in recent_posts %}
+        <div class="col-md-6">
+          <div class="card h-100 p-3">
+            {% if post.game %}
+              <span class="badge-game mb-2 d-inline-block">{{ post.game.name }}</span>
+            {% endif %}
+            <h6 class="fw-bold mb-1">
+              <a href="{{ post.get_absolute_url }}" class="text-white text-decoration-none">{{ post.title }}</a>
+            </h6>
+            <p class="text-muted small mb-2">{{ post.content|truncatechars:80 }}</p>
+            <div class="d-flex align-items-center gap-2 mt-auto">
+              <div class="avatar-sm" style="width:24px;height:24px;font-size:.7rem;">{{ post.author.username|first|upper }}</div>
+              <span class="text-muted small">{{ post.author.username }}</span>
+              <span class="text-muted small ms-auto">
+                <i class="bi bi-chat me-1"></i>{{ post.comments.count }}
+              </span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="card p-4 text-center text-muted">
+        Поки немає публікацій. <a href="{% url 'posts:create' %}">Будьте першим!</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Sidebar -->
+  <div class="col-lg-4">
+    <!-- LFG -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="fw-bold mb-0"><i class="bi bi-people me-2 text-cyan"></i>Шукають команду</h5>
+      <a href="{% url 'lfg:list' %}" class="btn btn-sm btn-outline-primary">Всі</a>
+    </div>
+    {% if recent_lfg %}
+      {% for lfg in recent_lfg %}
+      <div class="card p-3 mb-2 lfg-card-active">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <div class="avatar-sm">{{ lfg.author.username|first|upper }}</div>
+          <div>
+            <div class="fw-semibold small">{{ lfg.author.username }}</div>
+            <span class="badge-game">{{ lfg.game.name }}</span>
+          </div>
+        </div>
+        <p class="text-muted small mb-1">{{ lfg.description|truncatechars:60 }}</p>
+        <a href="{{ lfg.get_absolute_url }}" class="btn btn-sm btn-outline-primary w-100">Переглянути</a>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="card p-3 text-center text-muted small">Немає активних оголошень</div>
+    {% endif %}
+
+    <!-- Events -->
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+      <h5 class="fw-bold mb-0"><i class="bi bi-calendar-event me-2 text-accent"></i>Найближчі події</h5>
+      <a href="{% url 'lfg:event_list' %}" class="btn btn-sm btn-outline-primary">Всі</a>
+    </div>
+    {% if upcoming_events %}
+      {% for event in upcoming_events %}
+      <div class="card p-3 mb-2">
+        <div class="fw-semibold small mb-1">
+          <a href="{{ event.get_absolute_url }}" class="text-white text-decoration-none">{{ event.title }}</a>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="badge-game">{{ event.game.name }}</span>
+          <span class="text-muted small">
+            <i class="bi bi-people me-1"></i>{{ event.participants_count }}/{{ event.max_players }}
+          </span>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="card p-3 text-center text-muted small">Немає майбутніх подій</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

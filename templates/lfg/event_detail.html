@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}{{ event.title }} — TeamForge{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card p-4">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <span class="badge-game">{{ event.game.name }}</span>
+        {% if event.is_full %}
+          <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25">Заповнено</span>
+        {% else %}
+          <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">Є місця</span>
+        {% endif %}
+      </div>
+      <h2 class="fw-bold mb-2">{{ event.title }}</h2>
+      <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom" style="border-color:var(--border)!important">
+        <div class="avatar-sm">{{ event.author.username|first|upper }}</div>
+        <div>
+          <a href="{% url 'users:profile' event.author.username %}" class="text-white text-decoration-none fw-semibold small">
+            {{ event.author.username }}
+          </a>
+          <div class="text-muted" style="font-size:.75rem;">Організатор</div>
+        </div>
+        {% if user == event.author %}
+          <div class="ms-auto d-flex gap-2">
+            <a href="{% url 'lfg:event_edit' event.pk %}" class="btn btn-sm btn-outline-secondary">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <a href="{% url 'lfg:event_delete' event.pk %}" class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-trash"></i>
+            </a>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-6">
+          <div class="text-muted small mb-1">Дата</div>
+          <div class="fw-semibold"><i class="bi bi-calendar me-1 text-accent"></i>{{ event.event_date|date:"d.m.Y H:i" }}</div>
+        </div>
+        <div class="col-6">
+          <div class="text-muted small mb-1">Гравців</div>
+          <div class="fw-semibold"><i class="bi bi-people me-1 text-cyan"></i>{{ event.participants_count }} / {{ event.max_players }}</div>
+        </div>
+      </div>
+      <div class="progress mb-4" style="height:6px;background:var(--border);">
+        <div class="progress-bar" style="width:{% widthratio event.participants_count event.max_players 100 %}%;background:var(--accent)!important;"></div>
+      </div>
+
+      <h6 class="text-muted text-uppercase small fw-bold mb-2">Опис</h6>
+      <div style="white-space:pre-wrap;line-height:1.8;" class="mb-4">{{ event.description }}</div>
+
+      {% if user.is_authenticated %}
+        {% if is_participant %}
+          <form method="post" action="{% url 'lfg:event_leave' event.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger">
+              <i class="bi bi-box-arrow-left me-1"></i>Покинути подію
+            </button>
+          </form>
+        {% elif not event.is_full %}
+          <form method="post" action="{% url 'lfg:event_join' event.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-person-plus me-1"></i>Приєднатися
+            </button>
+          </form>
+        {% endif %}
+      {% else %}
+        <a href="{% url 'users:login' %}" class="btn btn-primary">Увійдіть, щоб приєднатися</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card p-3">
+      <h6 class="fw-bold mb-3">Учасники ({{ event.participants_count }})</h6>
+      {% for participant in event.participants.all %}
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <div class="avatar-sm">{{ participant.username|first|upper }}</div>
+          <a href="{% url 'users:profile' participant.username %}" class="text-white text-decoration-none small">
+            {{ participant.username }}
+          </a>
+          {% if participant == event.author %}
+            <span class="badge bg-warning bg-opacity-25 text-warning ms-auto" style="font-size:.65rem;">орг</span>
+          {% endif %}
+        </div>
+      {% empty %}
+        <p class="text-muted small">Поки немає учасників.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

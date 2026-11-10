@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Вхід — TeamForge{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-4">
+    <div class="card p-4">
+      <h3 class="fw-bold mb-1">Вхід</h3>
+      <p class="text-muted small mb-4">Раді бачити тебе знову</p>
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label small fw-semibold">Нікнейм</label>
+          <input type="text" name="username" class="form-control" autofocus required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label small fw-semibold">Пароль</label>
+          <input type="password" name="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mt-2">Увійти</button>
+      </form>
+      <p class="text-center text-muted small mt-3">
+        Немає акаунта? <a href="{% url 'users:register' %}">Зареєструватися</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

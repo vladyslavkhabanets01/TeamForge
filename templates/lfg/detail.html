@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}LFG: {{ post.author.username }} — TeamForge{% endblock %}
+{% block content %}
+<div class="row g-4 justify-content-center">
+  <div class="col-lg-7">
+    <div class="card p-4 lfg-card-{% if post.is_active %}active{% else %}inactive{% endif %}">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="avatar-circle" style="width:56px;height:56px;font-size:1.4rem;">
+          {{ post.author.username|first|upper }}
+        </div>
+        <div class="flex-fill">
+          <h5 class="fw-bold mb-0">
+            <a href="{% url 'users:profile' post.author.username %}" class="text-white text-decoration-none">
+              {{ post.author.username }}
+            </a>
+          </h5>
+          <span class="text-muted small">{{ post.created_at|date:"d.m.Y H:i" }}</span>
+        </div>
+        {% if user == post.author %}
+          <div class="d-flex gap-2">
+            <a href="{% url 'lfg:edit' post.pk %}" class="btn btn-sm btn-outline-secondary">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <a href="{% url 'lfg:delete' post.pk %}" class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-trash"></i>
+            </a>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="d-flex flex-wrap gap-2 mb-4">
+        <span class="badge-game fs-6 px-3 py-2">{{ post.game.name }}</span>
+        <span class="badge-role fs-6 px-3 py-2">{{ post.get_role_display }}</span>
+        {% if post.rank != 'any' %}
+          <span class="badge bg-secondary bg-opacity-25 text-secondary border border-secondary border-opacity-25 px-3 py-2">
+            {{ post.get_rank_display }}
+          </span>
+        {% endif %}
+        {% if not post.is_active %}
+          <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25 px-3 py-2">
+            Неактивний
+          </span>
+        {% endif %}
+      </div>
+
+      <h6 class="text-muted text-uppercase small fw-bold mb-2">Про себе</h6>
+      <div style="white-space:pre-wrap;line-height:1.8;" class="mb-4">{{ post.description }}</div>
+    </div>
+
+    <a href="{% url 'lfg:list' %}" class="btn btn-outline-secondary mt-3">
+      <i class="bi bi-arrow-left me-1"></i>До списку
+    </a>
+  </div>
+</div>
+{% endblock %}

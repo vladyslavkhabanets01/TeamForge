@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }} — TeamForge{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-8">
+    <!-- Post -->
+    <div class="card p-4 mb-4">
+      {% if post.game %}
+        <span class="badge-game mb-2 d-inline-block">{{ post.game.name }}</span>
+      {% endif %}
+      <h2 class="fw-bold mb-3">{{ post.title }}</h2>
+      <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom" style="border-color:var(--border)!important">
+        <div class="avatar-sm">{{ post.author.username|first|upper }}</div>
+        <div>
+          <a href="{% url 'users:profile' post.author.username %}" class="text-white text-decoration-none fw-semibold small">
+            {{ post.author.username }}
+          </a>
+          <div class="text-muted" style="font-size:.75rem;">{{ post.created_at|date:"d.m.Y H:i" }}</div>
+        </div>
+        {% if user == post.author %}
+          <div class="ms-auto d-flex gap-2">
+            <a href="{% url 'posts:edit' post.pk %}" class="btn btn-sm btn-outline-secondary">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <a href="{% url 'posts:delete' post.pk %}" class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-trash"></i>
+            </a>
+          </div>
+        {% endif %}
+      </div>
+      <div style="line-height:1.8;white-space:pre-wrap;">{{ post.content }}</div>
+    </div>
+
+    <!-- Comments -->
+    <h5 class="fw-bold mb-3">
+      <i class="bi bi-chat me-2 text-accent"></i>Коментарі ({{ comments|length }})
+    </h5>
+
+    {% if comments %}
+      {% for comment in comments %}
+      <div class="card p-3 mb-2">
+        <div class="d-flex align-items-start gap-2">
+          <div class="avatar-sm mt-1">{{ comment.author.username|first|upper }}</div>
+          <div class="flex-fill">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <a href="{% url 'users:profile' comment.author.username %}" class="text-white text-decoration-none fw-semibold small">
+                {{ comment.author.username }}
+              </a>
+              <span class="text-muted" style="font-size:.75rem;">{{ comment.created_at|date:"d.m.Y H:i" }}</span>
+              {% if user == comment.author %}
+                <form method="post" action="{% url 'posts:comment_delete' post.pk comment.pk %}" class="ms-auto">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-link text-danger p-0" style="font-size:.75rem;">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </form>
+              {% endif %}
+            </div>
+            <div class="text-muted small" style="white-space:pre-wrap;">{{ comment.content }}</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-muted small">Коментарів ще немає. Будьте першим!</p>
+    {% endif %}
+
+    <!-- Add comment -->
+    {% if user.is_authenticated %}
+    <div class="card p-3 mt-3">
+      <h6 class="fw-semibold mb-3">Додати коментар</h6>
+      <form method="post" action="{% url 'posts:comment_add' post.pk %}">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit" class="btn btn-primary btn-sm mt-2">Опублікувати</button>
+      </form>
+    </div>
+    {% else %}
+      <p class="text-muted small"><a href="{% url 'users:login' %}">Увійдіть</a>, щоб залишити коментар.</p>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card p-3">
+      <h6 class="fw-bold mb-3">Про автора</h6>
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <div class="avatar-circle" style="width:50px;height:50px;font-size:1.3rem;">
+          {{ post.author.username|first|upper }}
+        </div>
+        <div>
+          <a href="{% url 'users:profile' post.author.username %}" class="text-white text-decoration-none fw-semibold">
+            {{ post.author.username }}
+          </a>
+          <div class="text-muted small">{{ post.author.posts.count }} публікацій</div>
+        </div>
+      </div>
+      <a href="{% url 'users:profile' post.author.username %}" class="btn btn-outline-primary btn-sm w-100">
+        Переглянути профіль
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

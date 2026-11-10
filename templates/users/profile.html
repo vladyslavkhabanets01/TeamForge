@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}{{ profile_user.username }} — TeamForge{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <!-- Profile card -->
+  <div class="col-lg-4">
+    <div class="card p-4 text-center">
+      {% if user_profile.avatar %}
+        <img src="{{ user_profile.avatar.url }}" class="rounded-circle mx-auto mb-3"
+             style="width:100px;height:100px;object-fit:cover;" alt="Avatar">
+      {% else %}
+        <div class="avatar-circle mx-auto mb-3" style="width:100px;height:100px;font-size:2.5rem;">
+          {{ profile_user.username|first|upper }}
+        </div>
+      {% endif %}
+      <h4 class="fw-bold mb-0">{{ profile_user.username }}</h4>
+      {% if profile_user.first_name or profile_user.last_name %}
+        <p class="text-muted small">{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
+      {% endif %}
+
+      {% if user_profile.bio %}
+        <p class="text-muted mt-3 small">{{ user_profile.bio }}</p>
+      {% endif %}
+
+      {% if user_profile.discord %}
+        <div class="d-flex align-items-center justify-content-center gap-2 mt-2 text-muted small">
+          <i class="bi bi-discord text-accent"></i> {{ user_profile.discord }}
+        </div>
+      {% endif %}
+      {% if user_profile.steam %}
+        <div class="d-flex align-items-center justify-content-center gap-2 mt-1 text-muted small">
+          <i class="bi bi-steam text-cyan"></i> {{ user_profile.steam }}
+        </div>
+      {% endif %}
+
+      {% if user_profile.games.all %}
+        <div class="mt-3">
+          <div class="text-muted small mb-2">Улюблені ігри</div>
+          <div class="d-flex flex-wrap gap-1 justify-content-center">
+            {% for game in user_profile.games.all %}
+              <span class="badge-game">{{ game.name }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if user == profile_user %}
+        <a href="{% url 'users:edit_profile' %}" class="btn btn-outline-primary btn-sm mt-3 w-100">
+          <i class="bi bi-pencil me-1"></i>Редагувати профіль
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Activity -->
+  <div class="col-lg-8">
+    <h5 class="fw-bold mb-3"><i class="bi bi-newspaper me-2 text-accent"></i>Пости</h5>
+    {% if posts %}
+      {% for post in posts %}
+      <div class="card p-3 mb-2">
+        {% if post.game %}<span class="badge-game me-2">{{ post.game.name }}</span>{% endif %}
+        <a href="{{ post.get_absolute_url }}" class="text-white text-decoration-none fw-semibold">{{ post.title }}</a>
+        <div class="text-muted small mt-1">{{ post.created_at|date:"d.m.Y" }}</div>
+      </div>
+      {% endfor %}
+      <a href="{% url 'posts:list' %}" class="text-muted small">Всі пости →</a>
+    {% else %}
+      <p class="text-muted small">Поки немає публікацій.</p>
+    {% endif %}
+
+    {% if lfg_posts %}
+    <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-people me-2 text-cyan"></i>Активні LFG оголошення</h5>
+      {% for lfg in lfg_posts %}
+      <div class="card p-3 mb-2 lfg-card-active">
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge-game">{{ lfg.game.name }}</span>
+          <span class="badge-role">{{ lfg.get_role_display }}</span>
+          <a href="{{ lfg.get_absolute_url }}" class="ms-auto btn btn-sm btn-outline-primary">Деталі</a>
+        </div>
+      </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

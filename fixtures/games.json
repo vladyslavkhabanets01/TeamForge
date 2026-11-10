@@ -1,0 +1,12 @@
+[
+  {"model": "users.game", "pk": 1, "fields": {"name": "Dota 2", "slug": "dota-2"}},
+  {"model": "users.game", "pk": 2, "fields": {"name": "Counter-Strike 2", "slug": "cs2"}},
+  {"model": "users.game", "pk": 3, "fields": {"name": "League of Legends", "slug": "lol"}},
+  {"model": "users.game", "pk": 4, "fields": {"name": "Valorant", "slug": "valorant"}},
+  {"model": "users.game", "pk": 5, "fields": {"name": "Overwatch 2", "slug": "overwatch-2"}},
+  {"model": "users.game", "pk": 6, "fields": {"name": "Apex Legends", "slug": "apex-legends"}},
+  {"model": "users.game", "pk": 7, "fields": {"name": "PUBG", "slug": "pubg"}},
+  {"model": "users.game", "pk": 8, "fields": {"name": "World of Warcraft", "slug": "wow"}},
+  {"model": "users.game", "pk": 9, "fields": {"name": "Minecraft", "slug": "minecraft"}},
+  {"model": "users.game", "pk": 10, "fields": {"name": "Fortnite", "slug": "fortnite"}}
+]

@@ -15,8 +15,11 @@ db.sqlite3
 db.sqlite3-journal
 media/
 
-# Virtual environments
+# Secrets
 .env
+secrets.py
+
+# Virtual environments
 .venv
 env/
 venv/

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} — TeamForge{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <div class="card p-4">
+      <h4 class="fw-bold mb-4"><i class="bi bi-people me-2 text-cyan"></i>{{ title }}</h4>
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">{{ field.label }}</label>
+            {% if field.field.widget.input_type == 'checkbox' %}
+              <div class="form-check">
+                {{ field }}
+                <label class="form-check-label text-muted small" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              </div>
+            {% else %}
+              {{ field }}
+            {% endif %}
+            {% if field.errors %}
+              <div class="text-danger small mt-1">{{ field.errors|join:', ' }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" class="btn btn-primary px-4">Опублікувати</button>
+          {% if post %}
+            <a href="{{ post.get_absolute_url }}" class="btn btn-outline-secondary">Скасувати</a>
+          {% else %}
+            <a href="{% url 'lfg:list' %}" class="btn btn-outline-secondary">Скасувати</a>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
